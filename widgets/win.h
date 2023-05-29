@@ -3,37 +3,43 @@
 #include <QtGui>
 #include <QWidget>
 #include <QLabel>
-#include <QFrame>
 #include <QLineEdit>
 #include <QPushButton>
+
+class Counter : public QLineEdit {
+    Q_OBJECT
+public:
+    Counter(const QString & contents, QWidget *parent=0):
+        QLineEdit(contents,parent) {}
+
+signals:
+    void tick_signal();
+
+public slots:
+    void add_one() {
+        QString str = text();
+        int r = str.toInt();
+        if (r != 0 && r % 5 == 0) {
+            emit tick_signal();
+        }
+
+        r++;
+        str.setNum(r);
+        setText(str);
+    }
+};
 
 class Win : public QWidget {
     Q_OBJECT
 public:
     Win(QWidget *parent = 0);
 
-public slots:
-    void begin();
-    void calc();
-
 protected:
     QTextCodec *codec;
-    QFrame *frame;
-    QLabel *inputLabel;
-    QLineEdit *inputEdit;
-    QLabel *outputLabel;
-    QLineEdit *outputEdit;
-    QPushButton *nextButton;
+    QLabel *label1,*label2;
+    Counter *edit1,*edit2;
+    QPushButton *calcButton;
     QPushButton *exitButton;
-};
-
-class StrValidator:public QValidator {
-public:
-    StrValidator(QObject *parent):QValidator(parent) {}
-
-    virtual State validate(QString &str,int &pos)const {
-        return Acceptable;
-    }
 };
 
 #endif // WIN_H
